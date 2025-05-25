@@ -4,3 +4,8 @@ This project is my own implementation of a robust end-to-end ELT (Extract, Load,
 # Pipeline Architecture : 
 
 ![Retail-pipeline-diagram](https://github.com/user-attachments/assets/e2f1524f-b530-4d65-b0ff-5c290c7f3ba5)
+
+## 
+
+
+## 
