@@ -1,0 +1,9 @@
+
+
+sources:
+  - name : raw_data_tables
+    schema : raw
+    tables : 
+      - name: raw_data
+
+    

@@ -1,0 +1,17 @@
+checks for sales_fact:
+  - row_count > 0
+
+  - missing_count(SALES_ID) = 0
+  - missing_count(PRODUCT_ID) = 0
+
+  - duplicate_count(SALES_ID) = 0
+  - duplicate_count(SALES_ID, USER_ID, TRANSACTION_TIME, PRODUCT_ID) = 0
+
+
+  - failed rows:
+      fail condition: PRICE < 1 OR PRICE > 10000
+      name: "PRICE out of range"
+
+  - failed rows:
+      fail condition: RATING < 0 OR RATING > 5
+      name: "RATING out of range"

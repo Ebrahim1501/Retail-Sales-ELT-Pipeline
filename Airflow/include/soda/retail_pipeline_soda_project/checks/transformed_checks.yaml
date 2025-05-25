@@ -1,0 +1,29 @@
+checks for customers_dim:
+  - row_count > 0
+  - missing_count(USER_ID) = 0
+  - missing_count(NAME) = 0
+  - missing_count(EMAIL) = 0
+  - duplicate_count(USER_ID) = 0
+  - failed rows:
+      name: AGE out of range
+      fail condition: "AGE < 18 OR AGE > 100"
+
+checks for products_dim:
+  - row_count > 0
+  - missing_count(PRODUCT_ID) = 0
+  - missing_count(PRODUCT) = 0
+  - duplicate_count(PRODUCT_ID) = 0
+  - failed rows:
+      name: PRICE out of range
+      fail condition: "PRICE < 1 OR PRICE > 10000"
+
+checks for locations_dim:
+  - row_count > 0
+  - missing_count(LOCATION_ID) = 0
+  - missing_count(COUNTRY) = 0
+  - missing_count(CITY) = 0
+  - missing_count(STATE) = 0
+  - duplicate_count(LOCATION_ID) = 0
+
+
+

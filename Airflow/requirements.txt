@@ -1,0 +1,5 @@
+soda-core
+soda-core-snowflake
+dbt-core
+dbt-snowflake
+pandas
