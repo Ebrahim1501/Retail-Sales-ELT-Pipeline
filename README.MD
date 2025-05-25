@@ -3,4 +3,3 @@ This project is my own implementation of a robust end-to-end ELT (Extract, Load,
 
 # Pipeline Architecture : 
 
-https://github.com/Ebrahim1501/Retail-Sales-ELT-Pipeline/blob/main/Airflow/include/pipeline-diagram.png
