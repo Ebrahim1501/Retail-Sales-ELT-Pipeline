@@ -10,7 +10,7 @@ project_path=os.path.join(os.path.dirname(__file__), '..','..','include','projec
 sys.path.append(os.path.abspath(project_path))
 sys.path.append('/opt/airflow/include/projects/wallmart_project')
 #print(os.getcwd())
-import datagenerator #a handmade python script that generates databatches in multiple formats (JSON,txt,CSV) 
+import datagenerator #a custom python script that generates databatches in multiple formats (JSON,txt,CSV) 
 
 
 df=pd.read_csv(os.path.join(project_path,"retail_data.csv"))
