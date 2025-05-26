@@ -7,13 +7,13 @@ This project is my own implementation of a robust end-to-end ELT (Extract, Load,
 -Frequent data quality checks and error handling mechanism.
 -optimized for OLAP queries and data analysis workflows.
 ## Tools Used:
-- Docker
-- Airflow
-- Dbt-Core
-- Soda-Core
-- Snowflake
-- Snowsight
-- Python
+- **Docker** – Containerization  
+- **Airflow** – Workflow orchestration  
+- **DBT Core** – SQL-based data transformations  
+- **Soda Core** – Data quality checks  
+- **Snowflake** – Cloud data warehouse  
+- **Snowsight** – Built-in data visualization tool in Snowflake  
+- **Python** – Scripting and extraction logic  
 
 
 # Pipeline Architecture : 
@@ -35,23 +35,73 @@ The loading phase is triggered daily at the start of the day. It performs the fo
 - Loads the structured raw data into a Snowflake stage  
 This stage acts as a temporary holding zone before any transformation or cleansing is applied.
 
+## Transform
+Once the data is staged in Snowflake, it undergoes a multi-step transformation process categorized into Daily and Weekly jobs:
+### Daily:
+- Data is loaded into a raw table in Snowflake, then undergoes a series of cleaning and transformation steps using dbt queries. These steps include standardizing formats, filling null values, normalizing data, and finally loading the cleaned data into an incremental table that stores the processed results.
 
-## Transform  
-Once raw data is staged in Snowflake, the transformation phase is managed using **dbt-core**. Key tasks include:
-- Cleansing and standardizing data (e.g., handling missing values, type casting)  
-- Creating normalized **dimension** and **fact** tables based on business rules  
-- Building analytical **data marts** using star or snowflake schemas  
-- Tracking transformations using dbt’s model documentation and lineage features  
+-After the cleaning process, a set of data quality checks is executed on the recently cleaned data to ensure it meets the Silver Layer standards. These checks validate that there are no duplicates, nulls are properly handled, and all column formats and names are correct. The data validation is performed using the Soda Core framework.
 
-These transformations ensure that data is reliable, consistent, and query-optimized for downstream use.
+- Once data is validated, it is then reshaped into a star schema using another incremental DBT models having:
 
-## Data Quality Checks  
-Before loading into final marts, **Soda-core** performs automated data validation:
+Central fact tables (ex: sales)
 
-- Schema checks and null constraints    
-- Business rule validations (e.g., prices must be non-negative)  
+Multiple dimension tables (ex: products,countries,stores)
 
-Failures can trigger alerts or halt the pipeline, ensuring data trust and integrity.
+### Weekly:
+- At the beginning of each week, a final round of data quality checks is executed before building the aggregation models. These validations use custom Soda test queries to ensure the dataset conforms to Gold Layer standards. Checks include:
+
+Primary key uniqueness
+
+Foreign key integrity
+
+Business rule validations
+
+-The previously validated star schema data is used to create simple data marts optimized for OLAP (Online Analytical Processing) and reporting.These marts are visualized using Snowsight a built-in data visualization tool within Snowflake.
+
+## Containerization And Orcherstartion :
+The whole pipeline is orchestrated using Airflow DAGs, each responsible for a sequence of tasks.The entire orchestrated pipeline is packaged as a single Docker container for easier deployment,reproducibility, and better future scalability.
+
+
+
+# Repo's Structure :
+```
+Airflow/
+├── dags/
+└── include/
+    │
+    │
+    ├── dbt/
+    │   └── retail_pipeline_dbt_project/
+    │       ├── analyses/
+    │       ├── logs/
+    │       ├── macros/
+    │       ├── models/
+    │       │   ├── marts/
+    │       │   ├── star-wh/
+    │       │   └── transformed/
+    │       ├── seeds/
+    │       ├── snapshots/
+    |       └── tests/
+    │       
+    └── soda/
+        └── retail_pipeline_soda_project/
+            └── checks/
+```
+ `./dags`:  
+  Folder containing all DAG Python files used for pipeline scheduling.  
+  *(Only daily run DAGs are included in the repo for simplicity, as the weekly runs have very similar logic)*
+
+- `./include`:  
+  Contains all auxiliary folders/files used by the DAG scripts, including:  
+  - `./include/dbt/retail_pipeline_dbt_project`:  
+    The dbt project folder containing all incremental/views data model queries, macros, and other resources run by the DAG scripts on a daily or weekly basis.  
+  - `./include/soda/retail_pipeline_soda_project`:  
+    The Soda project folder holding some of the test YAML files used in the project.  
+    *(Only simple data quality checks are included in this repo)*
+
+
+
 
 
 
