@@ -6,19 +6,12 @@ This project is my own implementation of a robust end-to-end ELT (Extract, Load,
 - Scalable batch processing architecture for handling large volumes of data daily.
 -Frequent data quality checks and error handling mechanism.
 -optimized for OLAP queries and data analysis workflows.
-## Tools Used:
-- **Docker** – Containerization  
-- **Airflow** – Workflow orchestration  
-- **DBT Core** – SQL-based data transformations  
-- **Soda Core** – Data quality checks  
-- **Snowflake** – Cloud data warehouse  
-- **Snowsight** – Built-in data visualization tool in Snowflake  
-- **Python** – Scripting and extraction logic  
-
 
 # Pipeline Architecture : 
 
 ![Retail-pipeline-diagram](https://github.com/user-attachments/assets/e2f1524f-b530-4d65-b0ff-5c290c7f3ba5)
+
+
 
 ## Data Source
 
@@ -40,24 +33,24 @@ Once the data is staged in Snowflake, it undergoes a multi-step transformation p
 ### Daily:
 - Data is loaded into a raw table in Snowflake, then undergoes a series of cleaning and transformation steps using dbt queries. These steps include standardizing formats, filling null values, normalizing data, and finally loading the cleaned data into an incremental table that stores the processed results.
 
--After the cleaning process, a set of data quality checks is executed on the recently cleaned data to ensure it meets the Silver Layer standards. These checks validate that there are no duplicates, nulls are properly handled, and all column formats and names are correct. The data validation is performed using the Soda Core framework.
+- After the cleaning process, a set of data quality checks is executed on the recently cleaned data to ensure it meets the Silver Layer standards. These checks validate that there are no duplicates, nulls are properly handled, and all column formats and names are correct. The data validation is performed using the Soda Core framework.
 
 - Once data is validated, it is then reshaped into a star schema using another incremental DBT models having:
 
-Central fact tables (ex: sales)
+    - Central fact tables (ex: sales)
 
-Multiple dimension tables (ex: products,countries,stores)
+    - Multiple dimension tables (ex: products,countries,stores)
 
 ### Weekly:
 - At the beginning of each week, a final round of data quality checks is executed before building the aggregation models. These validations use custom Soda test queries to ensure the dataset conforms to Gold Layer standards. Checks include:
 
-Primary key uniqueness
+    - Primary key uniqueness
 
-Foreign key integrity
+    - Foreign key integrity
 
-Business rule validations
+    - Business rule validations
 
--The previously validated star schema data is used to create simple data marts optimized for OLAP (Online Analytical Processing) and reporting.These marts are visualized using Snowsight a built-in data visualization tool within Snowflake.
+- The previously validated star schema data is used to create simple data marts optimized for OLAP (Online Analytical Processing) and reporting.These marts are visualized using Snowsight a built-in data visualization tool within Snowflake.
 
 ## Containerization And Orcherstartion :
 The whole pipeline is orchestrated using Airflow DAGs, each responsible for a sequence of tasks.The entire orchestrated pipeline is packaged as a single Docker container for easier deployment,reproducibility, and better future scalability.
@@ -100,6 +93,15 @@ Airflow/
     The Soda project folder holding some of the test YAML files used in the project.  
     *(Only simple data quality checks are included in this repo)*
 
+
+# Tools Used:
+- **Docker** – Containerization  
+- **Airflow** – Workflow orchestration  
+- **DBT Core** – SQL-based data transformations  
+- **Soda Core** – Data quality checks  
+- **Snowflake** – Cloud data warehouse  
+- **Snowsight** – Built-in data visualization tool in Snowflake  
+- **Python** – Scripting and extraction logic  
 
 
 
